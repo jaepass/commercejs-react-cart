@@ -96,16 +96,17 @@
             display: flex;
             margin: 0 auto;
             margin-bottom: 0;
-            font-size: 0.95rem;
+            font-size: 1rem;
 
             button {
                 border: none;
                 background: none;
-                height: 4px;
+                font-size: 1.25rem;
             }
 
             p {
                 margin-bottom: 0;
+                margin-top: 3px;
             }
         }
 

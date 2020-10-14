@@ -375,7 +375,7 @@ At this stage, you should be able to see a minimal cart component rendered out i
 
 Going back to the `CartItem.vue` component, you can start to implement the first cart line item action using the Commerce.js [method](https://commercejs.com/docs/sdk/cart#update-cart) `commerce.cart.update()`. This request uses the `PUT v1/carts/{cart_id}/items/{line_item_id}` API to update the quantity or variant for the line item ID in the cart. For this guide, you will only be working with the main variant of the product item.
 
-Add a new handler in the `CartItem.vue` component to call a callback function `onUpdateCartQty`. Pass in `lineItemId` and `newQuantity` to this callback function. Again, you will need to bind the handler to the component's instance.
+Add a new handler in the `CartItem.vue` component to call a callback function `onUpdateCartQty`. Pass in `lineItemId` and `quantity` to this callback function. Again, you will need to bind the handler to the component's instance.
 
 ```js
 // CartItem.vue
@@ -385,8 +385,8 @@ constructor(props) {
   this.handleUpdateCartQty = this.handleUpdateCartQty.bind(this);
 }
 
-handleUpdateCartQty(lineItemId, newQuantity) {
-  this.props.onUpdateCartQty(lineItemId, newQuantity);
+handleUpdateCartQty(lineItemId, quantity) {
+  this.props.onUpdateCartQty(lineItemId, quantity);
 }
 ```
 
@@ -552,8 +552,8 @@ constructor(props) {
   this.handleRemoveFromCart = this.handleRemoveFromCart.bind(this);
 }
 
-handleUpdateCartQty(lineItemId, newQuantity) {
-  this.props.onUpdateCartQty(lineItemId, newQuantity);
+handleUpdateCartQty(lineItemId, quantity) {
+  this.props.onUpdateCartQty(lineItemId, quantity);
 }
 
 handleRemoveFromCart(lineItemId) {

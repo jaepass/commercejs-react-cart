@@ -10,8 +10,8 @@ class CartItem extends Component {
         this.handleRemoveFromCart = this.handleRemoveFromCart.bind(this);
     }
 
-    handleUpdateCartQty(lineItemId, newQuantity) {
-        this.props.onUpdateCartQty(lineItemId, newQuantity);
+    handleUpdateCartQty(lineItemId, quantity) {
+        this.props.onUpdateCartQty(lineItemId, quantity);
     }
 
     handleRemoveFromCart(lineItemId) {

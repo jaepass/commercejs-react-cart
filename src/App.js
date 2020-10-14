@@ -103,8 +103,8 @@ class App extends Component {
    * @param {string} lineItemId ID of the cart line item being updated
    * @param {number} newQuantity New line item quantity to update
    */
-  handleUpdateCartQty(lineItemId, newQuantity) {
-    commerce.cart.update(lineItemId, { newQuantity }).then((resp) => {
+  handleUpdateCartQty(lineItemId, quantity) {
+    commerce.cart.update(lineItemId, { quantity }).then((resp) => {
       this.setState({ cart: resp.cart })
     }).catch((error) => {
       console.log('There was an error updating the cart items', error);
