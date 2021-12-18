@@ -1,59 +1,40 @@
-import React, { Component } from 'react';
-import { commerce } from './lib/Commerce';
+import React, { useState, useEffect } from 'react';
+import commerce from './lib/commerce';
 import './styles/scss/styles.scss'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faShoppingBag, faTimes } from '@fortawesome/free-solid-svg-icons'
 
 import Hero from './components/Hero';
 import ProductsList from "./components/ProductsList";
-import Cart from './components/Cart';
+import CartNav from './components/CartNav';
 
 library.add(faShoppingBag, faTimes)
 
-class App extends Component {
-  constructor(props) {
-    super(props);
+const App = () => {
+  const [merchant, setMerchant] = useState({});
+  const [products, setProducts] = useState([]);
+  const [cart, setCart] = useState({})
 
-    this.state = {
-      merchant: {},
-      products: [],
-      cart: {},
-      isCartVisible: false,
-    }
-
-    this.handleAddToCart = this.handleAddToCart.bind(this);
-    this.handleUpdateCartQty = this.handleUpdateCartQty.bind(this);
-    this.handleRemoveFromCart = this.handleRemoveFromCart.bind(this);
-    this.handleEmptyCart = this.handleEmptyCart.bind(this);
-    this.toggleCart = this.toggleCart.bind(this);
-  }
-
-  componentDidMount() {
-    this.fetchMerchantDetails();
-    this.fetchProducts();
-    this.fetchCart();
-  }
-
-  /**
-   * Show hide cart in nav
-   */
-  toggleCart() {
-    const { isCartVisible } = this.state;
-    this.setState({ 
-      isCartVisible: !isCartVisible,
-    });
-  };
+  // Because React rendering can be triggered for many different reasons, 
+  // it is best practice to wrap our commerce object method calls into a 
+  // useEffect() hook. This hook acts as the replacment to componentWillMount() 
+  // function when using class components. By leaving the second argument array 
+  // empty, this method will run once before the initial render.
+  useEffect(() => {
+    fetchMerchantDetails();
+    fetchProducts();
+    fetchCart();
+  }, []);
 
   /**
    * Fetch merchant details
    * https://commercejs.com/docs/sdk/full-sdk-reference#merchants
    */
-  fetchMerchantDetails() {
+   const fetchMerchantDetails = () => {
     commerce.merchants.about().then((merchant) => {
-      this.setState({ merchant: merchant });
+      setMerchant(merchant);
     }).catch((error) => {
-      console.log('There was an error fetch the merchant details', error)
+      console.log('There was an error fetching the merchant details', error)
     });
   }
 
@@ -61,11 +42,11 @@ class App extends Component {
    * Fetch products data from Chec and stores in the products data object.
    * https://commercejs.com/docs/sdk/products
    */
-  fetchProducts() {
+  const fetchProducts = () => {
     commerce.products.list().then((products) => {
-      this.setState({ products: products.data });
+      setProducts(products.data);
     }).catch((error) => {
-      console.log('There was an error fetching the products', error);
+      console.log('There was an error fetching the products', error)
     });
   }
 
@@ -73,11 +54,11 @@ class App extends Component {
    * Retrieve the current cart or create one if one does not exist
    * https://commercejs.com/docs/sdk/cart
    */
-  fetchCart() {
+  const fetchCart = () => {
     commerce.cart.retrieve().then((cart) => {
-      this.setState({ cart: cart });
+      setCart(cart);
     }).catch((error) => {
-      console.error('There was an error fetching the cart', error);
+      console.log('There was an error fetching the cart', error);
     });
   }
 
@@ -88,26 +69,11 @@ class App extends Component {
    * @param {string} productId The ID of the product being added
    * @param {number} quantity The quantity of the product being added
    */
-  handleAddToCart(productId, quantity) {
+   const handleAddToCart = (productId, quantity) => {
     commerce.cart.add(productId, quantity).then((item) => {
-      this.setState({ cart: item.cart })
+      setCart(item.cart);
     }).catch((error) => {
       console.error('There was an error adding the item to the cart', error);
-    });
-  }
-
-  /**
-   * Updates line_items in cart
-   * https://commercejs.com/docs/sdk/cart/#update-cart
-   *
-   * @param {string} lineItemId ID of the cart line item being updated
-   * @param {number} newQuantity New line item quantity to update
-   */
-  handleUpdateCartQty(lineItemId, quantity) {
-    commerce.cart.update(lineItemId, { quantity }).then((resp) => {
-      this.setState({ cart: resp.cart })
-    }).catch((error) => {
-      console.log('There was an error updating the cart items', error);
     });
   }
 
@@ -117,13 +83,26 @@ class App extends Component {
    *
    * @param {string} lineItemId ID of the line item being removed
    */
-  handleRemoveFromCart(lineItemId) {
+  const handleRemoveFromCart = (lineItemId) => {
     commerce.cart.remove(lineItemId).then((resp) => {
-      this.setState({
-        cart: resp.cart
-      })
+      setCart(resp.cart);
     }).catch((error) => {
       console.error('There was an error removing the item from the cart', error);
+    });
+  }
+  
+  /**
+   * Updates line_items in cart
+   * https://commercejs.com/docs/sdk/cart/#update-cart
+   *
+   * @param {string} lineItemId ID of the cart line item being updated
+   * @param {number} newQuantity New line item quantity to update
+   */
+  const handleUpdateCartQty = (lineItemId, quantity) => {
+    commerce.cart.update(lineItemId, { quantity }).then((resp) => {
+      setCart(resp.cart);
+    }).catch((error) => {
+      console.log('There was an error updating the cart items', error);
     });
   }
 
@@ -131,64 +110,31 @@ class App extends Component {
    * Empties cart contents
    * https://commercejs.com/docs/sdk/cart/#remove-from-cart
    */
-  handleEmptyCart() {
+  const handleEmptyCart = () => {
     commerce.cart.empty().then((resp) => {
-      this.setState({ cart: resp.cart })
+      setCart(resp.cart);
     }).catch((error) => {
       console.error('There was an error emptying the cart', error);
     });
   }
 
-  renderCartNav() {
-    const { cart, isCartVisible } = this.state;
-
-    return (
-      <div className="nav">
-        <div className="nav__cart" onClick={this.toggleCart}>
-          {!isCartVisible ? (
-            <button className="nav__cart-open">
-              <FontAwesomeIcon size="2x" icon="shopping-bag" color="#292B83"/>
-              {cart !== null ? <span>{cart.total_items}</span> : ''}
-            </button>
-            ) : (
-              <button className="nav__cart-close">
-                <FontAwesomeIcon size="1x" icon="times" color="white"/>
-              </button>
-            )}
-        </div>
-      </div>
-    )
-  }
-
-  render() {
-    const { 
-      products,
-      merchant,
-      cart,
-      isCartVisible
-    } = this.state;
-
-    return (
-      <div className="app">
-        { this.renderCartNav() }
-        {isCartVisible &&
-          <Cart
-            cart={cart}
-            onUpdateCartQty={this.handleUpdateCartQty}
-            onRemoveFromCart={this.handleRemoveFromCart}
-            onEmptyCart={this.handleEmptyCart}
-          />
-        }  
-        <Hero
-          merchant={merchant}
-        />
-        <ProductsList 
-          products={products}
-          onAddToCart={this.handleAddToCart}
-        />
-      </div>
-    );
-  }
-};
+  return (
+    <div className="app">
+      <CartNav 
+        cart={cart}
+        onUpdateCartQty={handleUpdateCartQty}
+        onRemoveFromCart={handleRemoveFromCart}
+        onEmptyCart={handleEmptyCart}
+      />
+      <Hero
+        merchant={merchant}
+      />
+      <ProductsList 
+        products={products}
+        onAddToCart={handleAddToCart}
+      />
+    </div>
+  );
+}
 
 export default App;
