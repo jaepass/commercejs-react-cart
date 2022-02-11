@@ -250,10 +250,10 @@ Finally, we add a handler for empty the cart contents and pass that in to the `o
 
 ### Create the cart item component
 
-Next, create the `CartItem.vue` class component which will render each line item details such as the item image, name, price, and quantity.
+Next, create the `CartItem.js` class component which will render each line item details such as the item image, name, price, and quantity.
 
 ```jsx
-// Cart.vue
+// Cart.js
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -293,12 +293,12 @@ At this stage, you should be able to see a minimal cart component rendered out i
 
 ### 4. Update cart items
 
-Going back to the `CartItem.vue` component, you can start to implement the first cart line item action using the Commerce.js [method](https://commercejs.com/docs/sdk/cart#update-cart) `commerce.cart.update()`. This request uses the `PUT v1/carts/{cart_id}/items/{line_item_id}` API to update the quantity or variant for the line item ID in the cart. For this guide, you will only be working with the main variant of the product item.
+Going back to the `CartItem.js` component, you can start to implement the first cart line item action using the Commerce.js [method](https://commercejs.com/docs/sdk/cart#update-cart) `commerce.cart.update()`. This request uses the `PUT v1/carts/{cart_id}/items/{line_item_id}` API to update the quantity or variant for the line item ID in the cart. For this guide, you will only be working with the main variant of the product item.
 
-Add a new handler in the `CartItem.vue` component to call a callback function `onUpdateCartQty`. Pass in `lineItemId` and `quantity` to this callback function.
+Add a new handler in the `CartItem.js` component to call a callback function `onUpdateCartQty`. Pass in `lineItemId` and `quantity` to this callback function.
 
 ```js
-// CartItem.vue
+// CartItem.js
 
 const handleUpdateCartQty = (lineItemId, quantity) => {
   onUpdateCartQty(lineItemId, quantity);
@@ -337,7 +337,7 @@ of the item decreased or increased by 1.
 For the `App.js` component to handle the callback function, create an event handler for the updating of the line item quantities.
 
 ```jsx
-// App.vue
+// App.js
 
 /**
  * Updates line_items in cart
@@ -434,7 +434,7 @@ const handleRemoveFromCart = () => {
 Attach the `handleRemoveFromCart()` method to an isolated **Remove** button as well. When this click handler fires, the associated line item will be removed from the cart object.
 
 ```jsx
-// CartItem.vue
+// CartItem.js
 
 return (
   <div className="cart-item">
